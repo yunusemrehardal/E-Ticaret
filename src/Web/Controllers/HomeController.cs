@@ -1,21 +1,24 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ApplicationCore.Entities;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Diagnostics;
+using Web.Interfaces;
 using Web.Models;
+using Web.Services;
 
 namespace Web.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        private readonly IHomeViewModelService _homeViewModelService;
+        public HomeController(IHomeViewModelService homeViewModelService)
         {
-            _logger = logger;
+            _homeViewModelService = homeViewModelService;
         }
-
-        public IActionResult Index()
+        public async Task<IActionResult> Index(int? categoryId, int? brandId, int pageId = 1)
         {
-            return View();
+            var vm = await _homeViewModelService.GetHomeViewModelAsync(categoryId, brandId, pageId);
+            return View(vm);
         }
 
         public IActionResult Privacy()

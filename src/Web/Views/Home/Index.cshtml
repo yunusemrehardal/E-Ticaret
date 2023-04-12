@@ -96,3 +96,16 @@
 <div class="text-center">
     Showing @pi.RangeStart-@pi.RangeEnd of @pi.TotalItems
 </div>
+
+
+@section Scripts {
+    <script>
+        $("[data-add-to-basket]").click(function () {
+            let productId = $(this).data("add-to-basket");
+            let url = "@Url.Action("AddToBasket", "Basket")";
+            $.post(url, { productId }, function (data) {
+                $("[data-total-items]").text(data.totalItems);
+            });
+        });
+    </script>
+}

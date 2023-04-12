@@ -12,15 +12,38 @@ namespace Web.Controllers
             _basketViewModelService = basketViewModelService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var vm = await _basketViewModelService.GetBasketViewModelAsync();
+            return View(vm);
         }
 
+        [HttpPost]
         public async Task<IActionResult> AddToBasket(int productId)
         {
             var vm = await _basketViewModelService.AddItemToBasketAsync(productId, 1);
             return Json(vm);
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> Empty()
+        {
+            await _basketViewModelService.EmptyBasketAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int productId)
+        {
+            await _basketViewModelService.DeleteBasketItemAsync(productId);
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> Update([ModelBinder(Name = "quantities")] Dictionary<int, int> quantities)
+        {
+            await _basketViewModelService.UpdateBasketAsync(quantities);
+            return RedirectToAction(nameof(Index));
         }
     }
 }
